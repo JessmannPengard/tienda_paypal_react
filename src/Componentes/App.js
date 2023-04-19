@@ -30,8 +30,29 @@ class App extends React.Component {
         precio: 300
       }
       ]
-
     };
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:3500")
+      .then(datos => datos.json())
+      .then(datos => {
+        let productos = [...this.state.productos];
+        productos = datos.map(p => {
+          return {
+            id: p.Id,
+            nombre: p.Nombre,
+            precio: p.Precio,
+            descripcion: p.Descripcion,
+            imagen: p.Imagen
+          }
+        });
+        productos = datos;
+        this.setState({ "productos": productos });
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   render() {

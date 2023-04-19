@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 
 function NavbarLibros(props) {
+    useEffect(() => {
+        //console.log("useEffect en NavbarLibros");
+    });
+
     return (
         <Navbar bg="light" expand="lg">
             <Navbar.Brand href="#">Tienda</Navbar.Brand>
