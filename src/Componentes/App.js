@@ -15,7 +15,19 @@ class App extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    // Guardar los datos del carrito en local storage si ha habido cambios
+    if (prevState.carrito !== this.state.carrito) {
+      localStorage.setItem('carrito', JSON.stringify(this.state.carrito));
+    }
+  }
+
   componentDidMount() {
+    const datosCarrito = JSON.parse(localStorage.getItem('carrito'));
+    if (datosCarrito.length > 0) {
+      this.setState({ 'carrito': datosCarrito })
+    }
+
     fetch("http://localhost:3500")
       .then(datos => datos.json())
       .then(datos => {
@@ -53,6 +65,34 @@ class App extends React.Component {
     this.setState({ 'carrito': filtrado });
   }
 
+  pagar(email) {
+    let carrito = [];
+    this.state.carrito.forEach(element => {
+      carrito.push([element.id, element.precio, element.cantidad]);
+    });
+
+    let datos = {
+      'carrito': carrito,
+      'email': email
+    }
+
+    let url = "http://localhost:3500/pagar";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datos)
+    })
+      .then(datos => datos.json())
+      .then(datos => {
+        console.log(datos)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
   render() {
     return (
       <Router>
@@ -60,7 +100,13 @@ class App extends React.Component {
           <NavbarLibros carrito={this.state.carrito.length} />
           <Routes>
             <Route path="/" exact element={<Home productos={this.state.productos} manejador={(p) => this.manejador(p)} />}></Route>
-            <Route path="/carrito" element={<Carrito cart={this.state.carrito} eliminarProducto={(p) => this.eliminarProducto(p)} />} />
+            <Route path="/carrito" element={
+              <Carrito
+                cart={this.state.carrito}
+                eliminarProducto={(p) => this.eliminarProducto(p)}
+                pagar={(email) => { this.pagar(email) }}
+              />
+            } />
           </Routes>
         </div>
       </Router>

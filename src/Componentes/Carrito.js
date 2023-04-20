@@ -28,22 +28,24 @@ function Carrito(props) {
                                 </td>
                             </tr>
                         ))}
-                        <tr>
-                            <td colspan="5">
-                                <form action="pagar.php" method="post">
-                                    <div class="alert alert-success" role="alert">
-                                        <div class="mb-3">
-                                            <label for="" class="form-label">Email</label>
-                                            <input type="email" name="email" id="email" class="form-control" placeholder="Escribe aquí tu email" required></input>
+                        {props.cart.length !== 0 ?
+                            <tr>
+                                <td colspan="5">
+                                    <form onSubmit={(e) => { e.preventDefault(); props.pagar(document.getElementById("email").value) }} action="">
+                                        <div class="alert alert-success" role="alert">
+                                            <div class="mb-3">
+                                                <label for="" class="form-label">Email</label>
+                                                <input type="email" name="email" id="email" class="form-control" placeholder="Escribe aquí tu email" required></input>
+                                            </div>
+                                            <small id="emailHelp" class="text-muted">Los productos se enviarán a este Email</small>
                                         </div>
-                                        <small id="emailHelp" class="text-muted">Los productos se enviarán a este Email</small>
-                                    </div>
-                                    <div class="d-grid gap-2">
-                                        <button type="submit" class="btn btn-primary btn-lg btn-block" name="btnAccion" value="Proceder">Proceder a pagar</button>
-                                    </div>
-                                </form>
-                            </td>
-                        </tr>
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-primary btn-lg btn-block" name="btnAccion" value="Proceder">Proceder a pagar</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            : null}
                         <tr>
                             <td colspan="3" align="right">
                                 <h3>Total</h3>
