@@ -39,8 +39,18 @@ class App extends React.Component {
 
   manejador(p) {
     const nuevoCarrito = [...this.state.carrito];
-    nuevoCarrito.push(p);
-    this.setState({ 'carrito': nuevoCarrito });
+    if (nuevoCarrito.indexOf(p) === -1) {
+      p.cantidad = 1;
+      nuevoCarrito.push(p);
+      this.setState({ 'carrito': nuevoCarrito });
+    }
+  }
+
+  eliminarProducto(p) {
+    const nuevoCarrito = [...this.state.carrito];
+    const filtrado = nuevoCarrito.filter(prod => prod !== p);
+
+    this.setState({ 'carrito': filtrado });
   }
 
   render() {
@@ -50,7 +60,7 @@ class App extends React.Component {
           <NavbarLibros carrito={this.state.carrito.length} />
           <Routes>
             <Route path="/" exact element={<Home productos={this.state.productos} manejador={(p) => this.manejador(p)} />}></Route>
-            <Route path="/carrito" element={<Carrito cart={this.state.carrito} />} />
+            <Route path="/carrito" element={<Carrito cart={this.state.carrito} eliminarProducto={(p) => this.eliminarProducto(p)} />} />
           </Routes>
         </div>
       </Router>
