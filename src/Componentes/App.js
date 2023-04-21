@@ -4,6 +4,7 @@ import NavbarLibros from './NavBarLibros';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import Carrito from './Carrito';
+import Pagar from './Pagar';
 
 class App extends React.Component {
 
@@ -24,8 +25,10 @@ class App extends React.Component {
 
   componentDidMount() {
     const datosCarrito = JSON.parse(localStorage.getItem('carrito'));
-    if (datosCarrito.length > 0) {
-      this.setState({ 'carrito': datosCarrito })
+    if (Array.isArray(datosCarrito)) {
+      if (datosCarrito.length > 0) {
+        this.setState({ 'carrito': datosCarrito })
+      }
     }
 
     fetch("http://localhost:3500")
@@ -66,13 +69,14 @@ class App extends React.Component {
   }
 
   pagar(email) {
-    let carrito = [];
-    this.state.carrito.forEach(element => {
-      carrito.push([element.id, element.precio, element.cantidad]);
-    });
+    let nuevoCarrito = this.state.carrito.map(p => ({
+      id: p.id,
+      precio: p.precio,
+      cantidad: p.cantidad
+    }));
 
     let datos = {
-      'carrito': carrito,
+      'carrito': nuevoCarrito,
       'email': email
     }
 
@@ -86,7 +90,12 @@ class App extends React.Component {
     })
       .then(datos => datos.json())
       .then(datos => {
-        console.log(datos)
+        if (datos === "ok") {
+          let pago = this.state.pago;
+          pago.idVenta = datos.idVenta;
+          pago.total = datos.total;
+          this.setState({ pago: pago });
+        }
       })
       .catch(error => {
         console.log(error)
@@ -107,6 +116,7 @@ class App extends React.Component {
                 pagar={(email) => { this.pagar(email) }}
               />
             } />
+            <Route path="/pagar" element={<Pagar total={300} />}></Route>
           </Routes>
         </div>
       </Router>
